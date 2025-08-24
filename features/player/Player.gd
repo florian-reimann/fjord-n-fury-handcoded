@@ -18,6 +18,9 @@ const JUMP_BUFFER: float = 0.1
 # Double Jump System
 const MAX_JUMPS: int = 2  # Boden-Jump + Luft-Jump
 
+# True/False ist in der Luft
+var AirborneLastFrame: bool
+
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 
 func _ready() -> void:
@@ -33,9 +36,15 @@ func _physics_process(delta: float) -> void:
 	# GRAVITY: 
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
+		AirborneLastFrame = true
+	elif AirborneLastFrame:
+		PlayLandVFX()
+		AirborneLastFrame = false
 		
 	if Input.is_action_just_pressed("Jump") and is_on_floor():
 		velocity.y += JUMP_VELOCITY
+		animated_sprite_2d.play("Jump")
+		PlayJumpUpVFX()
 		
 	# Richtung des Spielers:	
 	var direction: float = Input.get_axis("Left","Right")
@@ -67,3 +76,10 @@ func updateAnimation():
 		else:
 			animated_sprite_2d.play("Idle")
 			
+func PlayJumpUpVFX():
+	var vfxToSpawn = preload("res://fx/vfx_jump_up.tscn")
+	GameManager.SpawnVFX(vfxToSpawn, global_position)	
+	
+func PlayLandVFX():
+	var vfxToSpawn = preload("res://fx/vfx_land.tscn")
+	GameManager.SpawnVFX(vfxToSpawn, global_position)	

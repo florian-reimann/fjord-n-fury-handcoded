@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=4 uid="uid://ba8qy3sml2uq6"]
+[gd_scene load_steps=8 format=4 uid="uid://ba8qy3sml2uq6"]
 
 [ext_resource type="Texture2D" uid="uid://duevfvw15v3oh" path="res://assets/tilemap/Tilemap_ProjectLittleAdventurerAndie2D.png" id="1_8gaax"]
 [ext_resource type="PackedScene" uid="uid://ch530bw3ar334" path="res://features/player/Player.tscn" id="2_8gaax"]
 [ext_resource type="Texture2D" uid="uid://gacp4vh5bfxb" path="res://features/levels/background.png" id="3_2fjjk"]
+[ext_resource type="PackedScene" uid="uid://bqos27iqsfg8k" path="res://features/enemies/Enemy.tscn" id="4_ljq5a"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_8gaax"]
 friction = 0.0
@@ -505,3 +506,6 @@ tile_map_data = PackedByteArray("AAAKAAoAAAARAAYAAAAKAAkAAAAQAAYAAAAKAAgAAAARAAY
 tile_set = SubResource("TileSet_madmh")
 
 [node name="Player" parent="." instance=ExtResource("2_8gaax")]
+
+[node name="Enemy" parent="." instance=ExtResource("4_ljq5a")]
+position = Vector2(144, 0)
