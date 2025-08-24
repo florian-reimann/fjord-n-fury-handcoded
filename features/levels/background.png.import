@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bno34gr52o5w0"
-path="res://.godot/imported/fury_idle.png-f98c9a8c8e47851a5047b910f19910d0.ctex"
+uid="uid://gacp4vh5bfxb"
+path="res://.godot/imported/background.png-632e97a1d7f06cb5b6f9624076914b11.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/player/fury_idle.png"
-dest_files=["res://.godot/imported/fury_idle.png-f98c9a8c8e47851a5047b910f19910d0.ctex"]
+source_file="res://features/levels/background.png"
+dest_files=["res://.godot/imported/background.png-632e97a1d7f06cb5b6f9624076914b11.ctex"]
 
 [params]
 

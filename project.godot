@@ -15,11 +15,18 @@ run/main_scene="uid://ba8qy3sml2uq6"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+GameManager="*res://autoload/GameManager.gd"
+
 [display]
 
 window/size/viewport_width=480
 window/size/viewport_height=270
 window/size/mode=3
+window/size/window_width_override=1024
+window/size/window_height_override=768
+window/stretch/mode="viewport"
 
 [input]
 
@@ -67,6 +74,12 @@ Grap={
 , Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":3,"pressure":0.0,"pressed":true,"script":null)
 ]
 }
+
+[layer_names]
+
+2d_physics/layer_1="Level"
+2d_physics/layer_2="Player"
+2d_physics/layer_3="Enemy"
 
 [rendering]
 
