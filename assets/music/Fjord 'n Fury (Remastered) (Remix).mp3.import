@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://w8bx1t4x1ajb"
+path="res://.godot/imported/Fjord 'n Fury (Remastered) (Remix).mp3-b4ea0940c54bce77cb0342c0ca70cb0b.mp3str"
+
+[deps]
+
+source_file="res://assets/music/Fjord 'n Fury (Remastered) (Remix).mp3"
+dest_files=["res://.godot/imported/Fjord 'n Fury (Remastered) (Remix).mp3-b4ea0940c54bce77cb0342c0ca70cb0b.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
