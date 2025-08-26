@@ -5,7 +5,6 @@ extends Node2D
 func _ready() -> void:
 	animated_sprite_2d.play("Start")
 	
-@warning_ignore("unused_parameter")	
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if animated_sprite_2d.is_playing() == false:
 		queue_free()

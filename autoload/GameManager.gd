@@ -17,3 +17,5 @@ func SpawnVFX(vfxToSpawn:Resource, position: Vector2):
 	get_tree().get_root().get_node("World").add_child(
 		vfxInstance
 	)
+	
+	return vfxInstance

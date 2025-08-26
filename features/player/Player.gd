@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+# VARIABLEN:
+
 # Mögliche States
 enum PlayerState { IDLE, RUN, JUMP, FALL, DASH }
 
@@ -21,21 +23,24 @@ const MAX_JUMPS: int = 2  # Boden-Jump + Luft-Jump
 # True/False ist in der Luft
 var AirborneLastFrame: bool
 
+var isShooting: bool = false
+const SHOOTING_DURATION: float = 0.25
+
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+@onready var shooting_point: Node2D = $Shooting_Point
 
 func _ready() -> void:
 	GameManager.player = self
 	GameManager.playerOriginPosition = position
 
-@warning_ignore("unused_parameter")
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	updateAnimation()
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 
 	# GRAVITY: 
 	if not is_on_floor():
-		velocity.y += GRAVITY * delta
+		velocity.y += GRAVITY * _delta
 		AirborneLastFrame = true
 	elif AirborneLastFrame:
 		PlayLandVFX()
@@ -63,6 +68,9 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("Down") && is_on_floor():
 		position.y += 3
 		
+	if Input.is_action_just_pressed("Shoot"):
+		TryToShoot()
+		
 	# Bewegung ausführen
 	move_and_slide()
 	
@@ -74,7 +82,10 @@ func updateAnimation():
 		if abs(velocity.x) >= 0.1:
 			animated_sprite_2d.play("Run")
 		else:
-			animated_sprite_2d.play("Idle")
+			if isShooting:
+				animated_sprite_2d.play("Shoot_Stand")
+			else:
+				animated_sprite_2d.play("Idle")
 			
 func PlayJumpUpVFX():
 	var vfxToSpawn = preload("res://fx/vfx_jump_up.tscn")
@@ -83,3 +94,22 @@ func PlayJumpUpVFX():
 func PlayLandVFX():
 	var vfxToSpawn = preload("res://fx/vfx_land.tscn")
 	GameManager.SpawnVFX(vfxToSpawn, global_position)	
+	
+func Shoot():
+	var bulletToSpawn = preload("res://features/bullet/Bullet.tscn")
+	var bulletInstance = GameManager.SpawnVFX(bulletToSpawn, shooting_point.global_position)
+	
+	# Wenn der player nach links guckt, muss die Bullet auch in die Richtung:
+	if animated_sprite_2d.flip_h:
+		bulletInstance.direction = -1
+	else:
+		bulletInstance.direction = 1
+		
+func TryToShoot():
+	if isShooting:
+		return
+	else:
+		isShooting = true
+		Shoot()
+		await get_tree().create_timer(SHOOTING_DURATION).timeout
+		isShooting = false

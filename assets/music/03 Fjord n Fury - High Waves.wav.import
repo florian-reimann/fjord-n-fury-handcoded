@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://vutum6n8b30r"
+path="res://.godot/imported/03 Fjord n Fury - High Waves.wav-ad8db540c042fe1aeaea8742222ad223.sample"
+
+[deps]
+
+source_file="res://assets/music/03 Fjord n Fury - High Waves.wav"
+dest_files=["res://.godot/imported/03 Fjord n Fury - High Waves.wav-ad8db540c042fe1aeaea8742222ad223.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

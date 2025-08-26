@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://yrjbdrk3ciku"
+path="res://.godot/imported/02 Fjord n Fury - Frozen Currents.wav-d0f7f41045482400517c8d0c76810e60.sample"
+
+[deps]
+
+source_file="res://assets/music/02 Fjord n Fury - Frozen Currents.wav"
+dest_files=["res://.godot/imported/02 Fjord n Fury - Frozen Currents.wav-d0f7f41045482400517c8d0c76810e60.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2
