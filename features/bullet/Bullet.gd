@@ -17,4 +17,11 @@ func _physics_process(_delta: float) -> void:
 func _on_body_entered(body: Node2D) -> void:
 	print("Etwas getroffen: ", body.name)
 	
+	var vfxToSpawn = preload("res://fx/vfx_bulletHit.tscn")
+	var vfxInstance = GameManager.SpawnVFX(vfxToSpawn, global_position)
+	
+	# Sprite umdrehen, wenn nach links geschossen wird
+	if direction == -1:
+		vfxInstance.scale.x = -1
+	
 	queue_free() #Und wieder weg mit der Bullet
