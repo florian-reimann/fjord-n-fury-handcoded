@@ -1,0 +1,62 @@
+[gd_resource type="VisualShader" load_steps=5 format=3 uid="uid://m1ltbyotomum"]
+
+[sub_resource type="VisualShaderNodeColorParameter" id="VisualShaderNodeColorParameter_ofba7"]
+parameter_name = "Blink_Color"
+
+[sub_resource type="VisualShaderNodeMix" id="VisualShaderNodeMix_ofba7"]
+default_input_values = [0, Vector3(0, 0, 0), 1, Vector3(1, 1, 1), 2, 1.0]
+op_type = 4
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_oyvx0"]
+input_name = "color"
+
+[sub_resource type="VisualShaderNodeFloatParameter" id="VisualShaderNodeFloatParameter_6rjp6"]
+parameter_name = "Blink"
+qualifier = 2
+hint = 1
+
+[resource]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+uniform vec4 Blink_Color : source_color;
+instance uniform float Blink : hint_range(0.0, 1.0);
+
+
+
+void fragment() {
+// Input:4
+	vec4 n_out4p0 = COLOR;
+
+
+// ColorParameter:2
+	vec4 n_out2p0 = Blink_Color;
+
+
+// FloatParameter:5
+	float n_out5p0 = Blink;
+
+
+// Mix:3
+	vec3 n_out3p0 = mix(vec3(n_out4p0.xyz), vec3(n_out2p0.xyz), n_out5p0);
+
+
+// Output:0
+	COLOR.rgb = n_out3p0;
+
+
+}
+"
+mode = 1
+flags/light_only = false
+nodes/vertex/0/position = Vector2(900, 120)
+nodes/fragment/0/position = Vector2(2000, 340)
+nodes/fragment/2/node = SubResource("VisualShaderNodeColorParameter_ofba7")
+nodes/fragment/2/position = Vector2(600, 620)
+nodes/fragment/3/node = SubResource("VisualShaderNodeMix_ofba7")
+nodes/fragment/3/position = Vector2(1400, 360)
+nodes/fragment/4/node = SubResource("VisualShaderNodeInput_oyvx0")
+nodes/fragment/4/position = Vector2(500, 340)
+nodes/fragment/5/node = SubResource("VisualShaderNodeFloatParameter_6rjp6")
+nodes/fragment/5/position = Vector2(580, 1080)
+nodes/fragment/connections = PackedInt32Array(3, 0, 0, 0, 4, 0, 3, 0, 2, 0, 3, 1, 5, 0, 3, 2)
