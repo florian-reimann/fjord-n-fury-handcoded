@@ -10,6 +10,8 @@ const SPEED: int = 170
 const JUMP_VELOCITY: int = -450
 const DASH_SPEED: int = 400
 const GRAVITY: int = 1800
+const GRAVITY_WALL: int = 700 # Wenn man an der Wand "runterrutscht"
+const WALL_JUMP_PUSH_FORCE: int = 150 # Abdrücken von der Wand
 
 # Coyote Time: Kurz nach Plattform-Verlassen noch springen können  
 const COYOTE_TIME: float = 0.15
