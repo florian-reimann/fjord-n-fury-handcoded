@@ -81,8 +81,8 @@ func ApplyDamage(damage: int):
 	
 	currentHealth -= damage
 	
-	var blink_tween = get_tree().create_tween()
-	blink_tween.tween_method(UpdateBlink, 1.0, 0.0, 0.3)
+	StartBlink()
+	GameManager.StartCameraShake()
 	
 	if currentHealth <= 0:
 		isDeath = true
@@ -93,6 +93,10 @@ func ApplyDamage(damage: int):
 		await  get_tree().create_timer(2).timeout
 		queue_free()
 		
+func StartBlink():
+	var blink_tween = get_tree().create_tween()
+	blink_tween.tween_method(UpdateBlink, 1.0, 0.0, 0.3)
+	
 func UpdateBlink(newValue: float):
 	animated_sprite_2d.set_instance_shader_parameter("Blink", newValue)
 	

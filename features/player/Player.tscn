@@ -228,6 +228,7 @@ frame = 2
 frame_progress = 1.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
+unique_name_in_owner = true
 offset = Vector2(0, -80)
 limit_bottom = 300
 position_smoothing_enabled = true

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=4 uid="uid://ba8qy3sml2uq6"]
+[gd_scene load_steps=18 format=4 uid="uid://ba8qy3sml2uq6"]
 
 [ext_resource type="Texture2D" uid="uid://duevfvw15v3oh" path="res://assets/tilemap/Tilemap_ProjectLittleAdventurerAndie2D.png" id="1_8gaax"]
 [ext_resource type="PackedScene" uid="uid://ch530bw3ar334" path="res://features/player/Player.tscn" id="2_8gaax"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bqos27iqsfg8k" path="res://features/enemies/Enemy.tscn" id="4_ljq5a"]
 [ext_resource type="AudioStream" uid="uid://yrjbdrk3ciku" path="res://assets/music/02 Fjord n Fury - Frozen Currents.wav" id="5_madmh"]
 [ext_resource type="Script" uid="uid://yaqsain5ts15" path="res://ui/UI_Manager.gd" id="6_yo8gm"]
+[ext_resource type="PackedScene" uid="uid://cqfry0afxd160" path="res://features/items/ItemCard.tscn" id="7_fk7ia"]
 
 [sub_resource type="Curve" id="Curve_madmh"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.008116841), 0.0, 0.0, 0, 0]
@@ -605,3 +606,9 @@ theme_override_styles/background = SubResource("StyleBoxFlat_madmh")
 theme_override_styles/fill = SubResource("StyleBoxFlat_yo8gm")
 value = 100.0
 show_percentage = false
+
+[node name="ItemCard" parent="." instance=ExtResource("7_fk7ia")]
+position = Vector2(96, 0)
+
+[node name="ItemCard2" parent="." instance=ExtResource("7_fk7ia")]
+position = Vector2(224, -64)

@@ -50,6 +50,7 @@ const MAX_HEALTH: int = 100
 	
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var shooting_point: Node2D = $Shooting_Point
+@onready var playerCamera: Camera2D = %Camera2D
 
 signal playerHealthUpdated(newValue, maxValue)
 
@@ -57,6 +58,9 @@ func _ready() -> void:
 	currentHealth = MAX_HEALTH
 	GameManager.player = self
 	GameManager.playerOriginPosition = position
+	
+	GameManager.playerCamera = playerCamera
+	GameManager.playerCameraOriginOffset = playerCamera.offset
 
 func _process(_delta: float) -> void:
 	updateAnimation()
@@ -184,8 +188,8 @@ func ApplyDamage(damage: int):
 		
 	currentHealth -= damage
 	
-	var blink_tween = get_tree().create_tween()
-	blink_tween.tween_method(UpdateBlink, 1.0, 0.0, 0.3)
+	StartBlink()
+	GameManager.StartCameraShake()
 	
 	if currentHealth <= 0:
 		currentState = PlayerState.DEAD
@@ -212,7 +216,14 @@ func TryToShoot():
 		PlayFireVFX()
 		await get_tree().create_timer(SHOOTING_DURATION).timeout
 		isShooting = false
-		
+
+func CollectedItemCard():
+	print("Collect Cards")
+
+func StartBlink():
+	var blink_tween = get_tree().create_tween()
+	blink_tween.tween_method(UpdateBlink, 1.0, 0.0, 0.3)
+	
 func UpdateBlink(newValue: float):
 	animated_sprite_2d.set_instance_shader_parameter("Blink", newValue)
 	
