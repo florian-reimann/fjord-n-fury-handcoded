@@ -1,10 +1,11 @@
-[gd_scene load_steps=14 format=4 uid="uid://ba8qy3sml2uq6"]
+[gd_scene load_steps=17 format=4 uid="uid://ba8qy3sml2uq6"]
 
 [ext_resource type="Texture2D" uid="uid://duevfvw15v3oh" path="res://assets/tilemap/Tilemap_ProjectLittleAdventurerAndie2D.png" id="1_8gaax"]
 [ext_resource type="PackedScene" uid="uid://ch530bw3ar334" path="res://features/player/Player.tscn" id="2_8gaax"]
 [ext_resource type="Texture2D" uid="uid://gacp4vh5bfxb" path="res://features/levels/background.png" id="3_2fjjk"]
 [ext_resource type="PackedScene" uid="uid://bqos27iqsfg8k" path="res://features/enemies/Enemy.tscn" id="4_ljq5a"]
 [ext_resource type="AudioStream" uid="uid://yrjbdrk3ciku" path="res://assets/music/02 Fjord n Fury - Frozen Currents.wav" id="5_madmh"]
+[ext_resource type="Script" uid="uid://yaqsain5ts15" path="res://ui/UI_Manager.gd" id="6_yo8gm"]
 
 [sub_resource type="Curve" id="Curve_madmh"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.008116841), 0.0, 0.0, 0, 0]
@@ -515,7 +516,26 @@ terrain_set_0/terrain_2/name = "Grass"
 terrain_set_0/terrain_2/color = Color(0.1255808, 0.9348453, 0, 1)
 sources/0 = SubResource("TileSetAtlasSource_ljq5a")
 
-[node name="World" type="Node2D"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_madmh"]
+bg_color = Color(0, 0, 0, 0.70000005)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.10980392, 0.23921569, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yo8gm"]
+bg_color = Color(1, 0.10980392, 0.23921569, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="Root" type="Node2D"]
 
 [node name="Level" type="Node2D" parent="."]
 
@@ -562,3 +582,26 @@ position = Vector2(720, -8)
 stream = ExtResource("5_madmh")
 volume_db = -4.0
 autoplay = true
+
+[node name="UI" type="CanvasLayer" parent="."]
+script = ExtResource("6_yo8gm")
+
+[node name="GameUI" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HealthBar" type="ProgressBar" parent="UI/GameUI"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 170.0
+offset_bottom = 20.0
+theme_override_styles/background = SubResource("StyleBoxFlat_madmh")
+theme_override_styles/fill = SubResource("StyleBoxFlat_yo8gm")
+value = 100.0
+show_percentage = false

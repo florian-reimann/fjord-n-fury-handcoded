@@ -8,3 +8,6 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if animated_sprite_2d.is_playing() == false:
 		queue_free()
+
+func StopNow():
+	queue_free()

@@ -1,9 +1,17 @@
 extends CharacterBody2D
+class_name PlayerController
 
 # VARIABLEN:
 
 # Mögliche States
-enum PlayerState { IDLE, RUN, JUMP, FALL, DASH }
+enum PlayerState { IDLE, RUN, JUMP, FALL, DASH, HURT, DEAD, NORMAL }
+
+var currentState: PlayerState = PlayerState.NORMAL:
+	set(new_value):
+		currentState = new_value
+		match currentState:
+			PlayerState.DEAD:
+				set_collision_layer_value(2, false)
 
 # Basic Movement Variables
 const SPEED: int = 170
@@ -33,10 +41,20 @@ var AirborneLastFrame: bool
 var isShooting: bool = false
 const SHOOTING_DURATION: float = 0.25
 
+var currentHealth: 
+	set(new_value):
+		currentHealth = new_value
+		emit_signal("playerHealthUpdated", currentHealth, MAX_HEALTH)
+		
+const MAX_HEALTH: int = 100
+	
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var shooting_point: Node2D = $Shooting_Point
 
+signal playerHealthUpdated(newValue, maxValue)
+
 func _ready() -> void:
+	currentHealth = MAX_HEALTH
 	GameManager.player = self
 	GameManager.playerOriginPosition = position
 
@@ -44,7 +62,8 @@ func _process(_delta: float) -> void:
 	updateAnimation()
 
 func _physics_process(_delta: float) -> void:
-
+	if currentState == PlayerState.DEAD:
+		return
 	# GRAVITY: 
 	if not is_on_floor():
 		velocity.y += GRAVITY * _delta
@@ -117,6 +136,9 @@ func _physics_process(_delta: float) -> void:
 	move_and_slide()
 	
 func updateAnimation():
+	if currentState == PlayerState.DEAD:
+		return
+	
 	if velocity.x != 0:
 		animated_sprite_2d.flip_h = velocity.x < 0
 		# Je nach Laufrichtung muss der Shooting-Pointer verschoben werden:
@@ -154,15 +176,23 @@ func updateAnimation():
 		
 		if isShooting:
 			animated_sprite_2d.play("Shoot_Jump")
-			
-func PlayJumpUpVFX():
-	var vfxToSpawn = preload("res://fx/vfx_jump_up.tscn")
-	GameManager.SpawnVFX(vfxToSpawn, global_position)	
+
+func ApplyDamage(damage: int):
+	#Er ist Tot Jim
+	if currentState == PlayerState.DEAD:
+		return
+		
+	currentHealth -= damage
 	
-func PlayLandVFX():
-	var vfxToSpawn = preload("res://fx/vfx_land.tscn")
-	GameManager.SpawnVFX(vfxToSpawn, global_position)	
+	var blink_tween = get_tree().create_tween()
+	blink_tween.tween_method(UpdateBlink, 1.0, 0.0, 0.3)
 	
+	if currentHealth <= 0:
+		currentState = PlayerState.DEAD
+		#animated_sprite_2d.play("Die")
+		await  get_tree().create_timer(2).timeout
+		#Game Over Screen:
+				
 func Shoot():
 	var bulletToSpawn = preload("res://features/bullet/Bullet.tscn")
 	var bulletInstance = GameManager.SpawnVFX(bulletToSpawn, shooting_point.global_position)
@@ -172,7 +202,7 @@ func Shoot():
 		bulletInstance.direction = -1
 	else:
 		bulletInstance.direction = 1
-		
+
 func TryToShoot():
 	if isShooting:
 		return
@@ -183,6 +213,17 @@ func TryToShoot():
 		await get_tree().create_timer(SHOOTING_DURATION).timeout
 		isShooting = false
 		
+func UpdateBlink(newValue: float):
+	animated_sprite_2d.set_instance_shader_parameter("Blink", newValue)
+	
+func PlayJumpUpVFX():
+	var vfxToSpawn = preload("res://fx/vfx_jump_up.tscn")
+	GameManager.SpawnVFX(vfxToSpawn, global_position)	
+	
+func PlayLandVFX():
+	var vfxToSpawn = preload("res://fx/vfx_land.tscn")
+	GameManager.SpawnVFX(vfxToSpawn, global_position)			
+	
 func PlayFireVFX():
 	var vfxToSpawn = preload("res://fx/vfx_Shoot_Fire.tscn")
 	var vfxInstance = GameManager.SpawnVFX(vfxToSpawn, shooting_point.global_position)
