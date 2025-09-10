@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3 uid="uid://cf6wx3es5fnu8"]
+
+[ext_resource type="Script" uid="uid://bo6b6wgs72s4" path="res://features/items/ItemData.gd" id="1_ug1y0"]
+
+[resource]
+script = ExtResource("1_ug1y0")
+id = "power_bullet"
+title = "Power Bullet"
+desc = "Ballert ordentlich einen"
+metadata/_custom_type_script = "uid://bo6b6wgs72s4"

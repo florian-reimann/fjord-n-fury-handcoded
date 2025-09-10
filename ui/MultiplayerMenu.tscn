@@ -1,0 +1,78 @@
+[gd_scene load_steps=7 format=3 uid="uid://did06te0r58s1"]
+
+[ext_resource type="AudioStream" uid="uid://co2i5cocqm0ia" path="res://assets/music/01 Fjord n Fury Theme 8Bit.wav" id="1_mkgau"]
+[ext_resource type="Script" uid="uid://dauqbana57qgf" path="res://ui/MultiplayerMenu.gd" id="2_1b7w2"]
+[ext_resource type="Texture2D" uid="uid://gacp4vh5bfxb" path="res://features/levels/background.png" id="3_hpogq"]
+[ext_resource type="FontFile" uid="uid://c1tep3jkif8g8" path="res://ui/font/PressStart2P-Regular.ttf" id="4_gg657"]
+[ext_resource type="PackedScene" uid="uid://1fvets1arxnj" path="res://ui/components/Button.tscn" id="5_dkf48"]
+[ext_resource type="PackedScene" uid="uid://rm2sujb618dk" path="res://ui/components/TextEdit.tscn" id="6_8mrkp"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("1_mkgau")
+volume_db = -5.0
+autoplay = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+script = ExtResource("2_1b7w2")
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_hpogq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -54.0
+offset_top = -24.0
+offset_right = 54.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/Control/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_gg657")
+theme_override_font_sizes/font_size = 16
+text = "Multiplayer"
+horizontal_alignment = 1
+
+[node name="CreateServer_Button" parent="CanvasLayer/Control/VBoxContainer" instance=ExtResource("5_dkf48")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Create Server"
+
+[node name="IP_TextEdit" parent="CanvasLayer/Control/VBoxContainer" instance=ExtResource("6_8mrkp")]
+layout_mode = 2
+emoji_menu_enabled = false
+
+[node name="Port_TextEdit" parent="CanvasLayer/Control/VBoxContainer" instance=ExtResource("6_8mrkp")]
+layout_mode = 2
+text = "8080"
+
+[node name="JoinServer_Button" parent="CanvasLayer/Control/VBoxContainer" instance=ExtResource("5_dkf48")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Join Server"
+
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/CreateServer_Button" to="CanvasLayer" method="_on_sp_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/JoinServer_Button" to="CanvasLayer" method="_on_mp_button_pressed"]

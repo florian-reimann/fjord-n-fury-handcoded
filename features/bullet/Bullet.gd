@@ -12,8 +12,6 @@ func _physics_process(_delta: float) -> void:
 		
 	position.x += SPEED * direction * _delta
 
-
-
 func _on_body_entered(body: Node2D) -> void:
 	print("Etwas getroffen: ", body.name)
 	
@@ -32,6 +30,4 @@ func _on_body_entered(body: Node2D) -> void:
 	elif player:
 		player.ApplyDamage(damage)
 		
-	
-	
 	queue_free() #Und wieder weg mit der Bullet

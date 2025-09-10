@@ -195,7 +195,7 @@ func ApplyDamage(damage: int):
 		currentState = PlayerState.DEAD
 		#animated_sprite_2d.play("Die")
 		await  get_tree().create_timer(2).timeout
-		#Game Over Screen:
+		get_tree().reload_current_scene()
 				
 func Shoot():
 	var bulletToSpawn = preload("res://features/bullet/Bullet.tscn")

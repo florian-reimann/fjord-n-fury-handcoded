@@ -11,13 +11,14 @@ config_version=5
 [application]
 
 config/name="Fjord n Fury"
-run/main_scene="uid://ba8qy3sml2uq6"
+run/main_scene="uid://b75p3f2pnagcc"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
 GameManager="*res://autoload/GameManager.gd"
+ItemDB="*res://features/items/ItemDB.gd"
 
 [display]
 
