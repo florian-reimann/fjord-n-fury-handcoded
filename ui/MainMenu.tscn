@@ -58,16 +58,26 @@ horizontal_alignment = 1
 [node name="SP_Button" parent="CanvasLayer/Control/VBoxContainer" instance=ExtResource("5_x262b")]
 unique_name_in_owner = true
 layout_mode = 2
+focus_neighbor_top = NodePath("../Quit_Button")
+focus_neighbor_bottom = NodePath("../MP_Button")
+focus_next = NodePath("../MP_Button")
+focus_previous = NodePath("../Quit_Button")
 text = "Singleplayer"
 
 [node name="MP_Button" parent="CanvasLayer/Control/VBoxContainer" instance=ExtResource("5_x262b")]
 unique_name_in_owner = true
 layout_mode = 2
+focus_next = NodePath("../Quit_Button")
+focus_previous = NodePath("../SP_Button")
 text = "Multiplayer"
 
 [node name="Quit_Button" parent="CanvasLayer/Control/VBoxContainer" instance=ExtResource("5_x262b")]
 unique_name_in_owner = true
 layout_mode = 2
+focus_neighbor_top = NodePath("../MP_Button")
+focus_neighbor_bottom = NodePath("../SP_Button")
+focus_next = NodePath("../SP_Button")
+focus_previous = NodePath("../MP_Button")
 text = "Spiel Beenden"
 
 [connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/SP_Button" to="CanvasLayer" method="_on_sp_button_pressed"]

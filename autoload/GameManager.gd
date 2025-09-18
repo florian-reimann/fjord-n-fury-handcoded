@@ -9,14 +9,15 @@ var cameraShakeNoise: FastNoiseLite
 var playerCameraOriginOffset: Vector2
 
 func _ready() -> void:
-	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	#Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 	
 	# Noise für eventuellen Camerashake generieren:
 	cameraShakeNoise = FastNoiseLite.new()
 
 func RespawnPlayer():
 	print("Respawn")
-	player.position = playerOriginPosition
+	#player.position = playerOriginPosition
+	get_tree().reload_current_scene()
 
 func SpawnVFX(vfxToSpawn:Resource, position: Vector2):
 	var vfxInstance = vfxToSpawn.instantiate()

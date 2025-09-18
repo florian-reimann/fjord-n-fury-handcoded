@@ -52,6 +52,8 @@ const MAX_HEALTH: int = 100
 @onready var shooting_point: Node2D = $Shooting_Point
 @onready var playerCamera: Camera2D = %Camera2D
 
+var bulletScene: PackedScene = preload("uid://dk5eg5ivs8brj")
+
 signal playerHealthUpdated(newValue, maxValue)
 
 func _ready() -> void:
@@ -125,10 +127,6 @@ func _physics_process(_delta: float) -> void:
 	else:
 		velocity.x = 0
 		
-	# Reset Player, wenn eine Fallgrenze überschreitet:
-	if position.y >= 800:
-		GameManager.RespawnPlayer()
-		
 	# Runter von der OneWay Platform:
 	if Input.is_action_just_pressed("Down") && is_on_floor():
 		position.y += 3
@@ -138,6 +136,10 @@ func _physics_process(_delta: float) -> void:
 		
 	# Bewegung ausführen
 	move_and_slide()
+	
+	# Reset Player, wenn eine Fallgrenze überschreitet:
+	if position.y >= 800:
+		GameManager.RespawnPlayer()
 	
 func updateAnimation():
 	if currentState == PlayerState.DEAD:
@@ -195,11 +197,11 @@ func ApplyDamage(damage: int):
 		currentState = PlayerState.DEAD
 		#animated_sprite_2d.play("Die")
 		await  get_tree().create_timer(2).timeout
-		get_tree().reload_current_scene()
+		GameManager.RespawnPlayer()
 				
 func Shoot():
-	var bulletToSpawn = preload("res://features/bullet/Bullet.tscn")
-	var bulletInstance = GameManager.SpawnVFX(bulletToSpawn, shooting_point.global_position)
+	var bulletInstance = GameManager.SpawnVFX(bulletScene, shooting_point.global_position) as BulletController
+	bulletInstance.damage = 30
 	
 	# Wenn der player nach links guckt, muss die Bullet auch in die Richtung:
 	if animated_sprite_2d.flip_h:

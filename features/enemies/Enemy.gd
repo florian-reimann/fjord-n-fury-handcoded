@@ -24,6 +24,8 @@ var attentionNode: Node2D = null
 @onready var shooting_point: Node2D = $Shooting_Point
 @onready var attention_point: Node2D = $Attention_Point
 
+var bulletScene: PackedScene = preload("uid://dk5eg5ivs8brj")
+
 func _process(_delta: float) -> void:
 	updateAnimation()
 	
@@ -123,8 +125,7 @@ func SpottingPlayer():
 		TryToShoot()
 
 func Shoot():
-	var bulletToSpawn = preload("res://features/bullet/Bullet.tscn")
-	var bulletInstance = GameManager.SpawnVFX(bulletToSpawn, shooting_point.global_position)
+	var bulletInstance = GameManager.SpawnVFX(bulletScene, shooting_point.global_position) as BulletController
 	bulletInstance.damage = 50
 	
 	# Wenn der player nach links guckt, muss die Bullet auch in die Richtung:

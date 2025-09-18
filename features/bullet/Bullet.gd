@@ -1,9 +1,10 @@
+class_name BulletController
 extends Area2D
 
 @onready var bullet_sprite_2d: Sprite2D = $Bullet_Sprite2D
 
 const SPEED: int = 500
-var damage: int = 30 # Base-Schaden
+var damage: int = 10 # Base-Schaden
 var direction: int = 1
 
 func _physics_process(_delta: float) -> void:

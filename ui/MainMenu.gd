@@ -5,7 +5,7 @@ extends CanvasLayer
 @onready var quit_button: Button = %Quit_Button
 
 func _ready() -> void:
-	pass
+	sp_button.grab_focus()
 
 func _on_sp_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://features/levels/Level_01.tscn")
