@@ -2,8 +2,8 @@
 
 [ext_resource type="AudioStream" uid="uid://co2i5cocqm0ia" path="res://assets/music/01 Fjord n Fury Theme 8Bit.wav" id="1_nmrkx"]
 [ext_resource type="Script" uid="uid://d1nsrir02ff3u" path="res://ui/MainMenu.gd" id="1_rn8js"]
-[ext_resource type="FontFile" uid="uid://c1tep3jkif8g8" path="res://ui/font/PressStart2P-Regular.ttf" id="2_nmrkx"]
 [ext_resource type="Texture2D" uid="uid://gacp4vh5bfxb" path="res://features/levels/background.png" id="3_8v85u"]
+[ext_resource type="Theme" uid="uid://k2grjrrdlvmy" path="res://ui/theme.tres" id="4_x262b"]
 [ext_resource type="PackedScene" uid="uid://1fvets1arxnj" path="res://ui/components/Button.tscn" id="5_x262b"]
 
 [node name="Node2D" type="Node2D"]
@@ -50,7 +50,7 @@ grow_vertical = 2
 
 [node name="Label" type="Label" parent="CanvasLayer/Control/VBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_nmrkx")
+theme = ExtResource("4_x262b")
 theme_override_font_sizes/font_size = 16
 text = "Menü"
 horizontal_alignment = 1

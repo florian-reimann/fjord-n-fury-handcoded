@@ -1,11 +1,11 @@
 extends Area2D
-
-signal choicesReady(choices: Array[ItemData])
+class_name ItemCard
 
 func _on_body_entered(body: Node2D) -> void:
 	var player = body as PlayerController
 	if player:
-		emit_signal("choicesReady", ItemDB.PickThreeUnique())
+		# Übergibt die drei Karten an den UIManager, dort wird das Anzeigen geregelt:
+		GlobalSignals.cardChoices.emit(ItemDB.PickThreeUnique())
 		queue_free()
 	
 	# Das hinzufühgen zum Player kommt jetzt demnächst in das UI Script

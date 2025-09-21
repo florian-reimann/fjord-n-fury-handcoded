@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3 uid="uid://d3oplxdd5qy07"]
+
+[ext_resource type="Script" uid="uid://bo6b6wgs72s4" path="res://features/items/ItemData.gd" id="1_368vp"]
+
+[resource]
+script = ExtResource("1_368vp")
+id = "small_health"
+title = "Small Health"
+type = 1
+metadata/_custom_type_script = "uid://bo6b6wgs72s4"

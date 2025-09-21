@@ -5,12 +5,12 @@ var Items: Array[ItemData] = []
 # Zufallszahlengenerator für Shuffle und Auswahl
 var RandomGenerator: RandomNumberGenerator = RandomNumberGenerator.new()
 
-func _Ready() -> void:
+func _ready() -> void:
 	# Zufallszahlengenerator initialisieren
 	RandomGenerator.randomize()
 
 	# Ordner öffnen, in dem die .tres Dateien liegen
-	var dir: DirAccess = DirAccess.open("res://data/items")
+	var dir: DirAccess = DirAccess.open("res://features/items/resources")
 	if dir:
 		dir.list_dir_begin()  # Verzeichnisdurchlauf starten
 

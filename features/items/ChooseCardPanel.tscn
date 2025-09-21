@@ -1,0 +1,55 @@
+[gd_scene load_steps=7 format=3 uid="uid://b2oht7viyiv22"]
+
+[ext_resource type="Theme" uid="uid://k2grjrrdlvmy" path="res://ui/theme.tres" id="1_gg3gk"]
+[ext_resource type="Script" uid="uid://bt0bc1qfemjtq" path="res://features/items/ChooseCardPanel.gd" id="1_tfkv8"]
+[ext_resource type="Texture2D" uid="uid://c7gkvy26v0yjd" path="res://features/items/card.png" id="2_tfkv8"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tfkv8"]
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_577mu"]
+atlas = ExtResource("2_tfkv8")
+region = Rect2(0, 0, 150, 220)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_llari"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_577mu")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="CardPanel" type="Button"]
+offset_right = 150.0
+offset_bottom = 220.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_styles/focus = SubResource("StyleBoxFlat_tfkv8")
+script = ExtResource("1_tfkv8")
+
+[node name="CardTitle" type="Label" parent="."]
+unique_name_in_owner = true
+z_index = 10
+layout_mode = 0
+offset_left = 10.0
+offset_top = 106.0
+offset_right = 140.0
+offset_bottom = 114.0
+theme = ExtResource("1_gg3gk")
+theme_override_colors/font_color = Color(0.019607844, 0.14901961, 0.24705882, 1)
+text = "Cardname"
+horizontal_alignment = 1
+
+[node name="CardIcon" type="Sprite2D" parent="."]
+z_index = 10
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_llari")
+centered = false

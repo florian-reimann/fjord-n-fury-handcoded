@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=4 uid="uid://ba8qy3sml2uq6"]
+[gd_scene load_steps=21 format=4 uid="uid://ba8qy3sml2uq6"]
 
 [ext_resource type="Texture2D" uid="uid://duevfvw15v3oh" path="res://assets/tilemap/Tilemap_ProjectLittleAdventurerAndie2D.png" id="1_8gaax"]
 [ext_resource type="PackedScene" uid="uid://ch530bw3ar334" path="res://features/player/Player.tscn" id="2_8gaax"]
@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://yrjbdrk3ciku" path="res://assets/music/02 Fjord n Fury - Frozen Currents.wav" id="5_madmh"]
 [ext_resource type="Script" uid="uid://yaqsain5ts15" path="res://ui/UI_Manager.gd" id="6_yo8gm"]
 [ext_resource type="PackedScene" uid="uid://cqfry0afxd160" path="res://features/items/ItemCard.tscn" id="7_fk7ia"]
+[ext_resource type="Theme" uid="uid://k2grjrrdlvmy" path="res://ui/theme.tres" id="8_ucjr1"]
 
 [sub_resource type="Curve" id="Curve_madmh"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.008116841), 0.0, 0.0, 0, 0]
@@ -538,6 +539,13 @@ corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 anti_aliasing = false
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ucjr1"]
+bg_color = Color(0.025840001, 0.14733289, 0.24780053, 0.5)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ucjr1"]
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+
 [node name="Root" type="Node2D"]
 
 [node name="Level" type="Node2D" parent="."]
@@ -614,3 +622,70 @@ theme_override_styles/background = SubResource("StyleBoxFlat_madmh")
 theme_override_styles/fill = SubResource("StyleBoxFlat_yo8gm")
 value = 100.0
 show_percentage = false
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/GameUI"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/GameUI/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="EquippedItem" type="Label" parent="UI/GameUI/HBoxContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("8_ucjr1")
+theme_override_constants/line_spacing = 0
+text = "POWER: "
+vertical_alignment = 1
+
+[node name="PickCardUI" type="Control" parent="UI"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/PickCardUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ucjr1")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/PickCardUI/PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/PickCardUI/PanelContainer/VBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+theme = ExtResource("8_ucjr1")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ucjr1")
+text = "Wähle eine Fähigkeit"
+horizontal_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/PickCardUI/PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ChooseCardHBoxContainer" type="HBoxContainer" parent="UI/PickCardUI/PanelContainer/VBoxContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3

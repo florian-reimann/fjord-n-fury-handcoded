@@ -47,6 +47,8 @@ var currentHealth:
 		emit_signal("playerHealthUpdated", currentHealth, MAX_HEALTH)
 		
 const MAX_HEALTH: int = 100
+
+var equippedItem: ItemData
 	
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var shooting_point: Node2D = $Shooting_Point
@@ -221,6 +223,9 @@ func TryToShoot():
 
 func CollectedItemCard():
 	print("Collect Cards")
+
+func EquipItem(item: ItemData) -> void:
+	equippedItem = item
 
 func StartBlink():
 	var blink_tween = get_tree().create_tween()
