@@ -74,7 +74,10 @@ func updateAnimation():
 	if not isSpottingPlayer:
 		animated_sprite_2d.play("Walk")
 	else:
-		animated_sprite_2d.play("Idle")
+		if isShooting:
+			animated_sprite_2d.play("Shoot")
+		else:
+			animated_sprite_2d.play("Idle")
 	
 func ApplyDamage(damage: int):
 	#Er ist Tot Jim

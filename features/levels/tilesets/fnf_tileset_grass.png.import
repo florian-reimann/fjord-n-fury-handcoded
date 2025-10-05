@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://duevfvw15v3oh"
-path="res://.godot/imported/Tilemap_ProjectLittleAdventurerAndie2D.png-ef3241d1f834c19c9e4b2cd7271f583a.ctex"
+uid="uid://ctcsta1g4r85r"
+path="res://.godot/imported/fnf_tileset_grass.png-80e2b758599f2afdf05a9c48d4c6b733.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilemap/Tilemap_ProjectLittleAdventurerAndie2D.png"
-dest_files=["res://.godot/imported/Tilemap_ProjectLittleAdventurerAndie2D.png-ef3241d1f834c19c9e4b2cd7271f583a.ctex"]
+source_file="res://features/levels/tilesets/fnf_tileset_grass.png"
+dest_files=["res://.godot/imported/fnf_tileset_grass.png-80e2b758599f2afdf05a9c48d4c6b733.ctex"]
 
 [params]
 

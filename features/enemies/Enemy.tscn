@@ -1,10 +1,11 @@
-[gd_scene load_steps=35 format=3 uid="uid://bqos27iqsfg8k"]
+[gd_scene load_steps=39 format=3 uid="uid://bqos27iqsfg8k"]
 
 [ext_resource type="Script" uid="uid://cfbpwmbityw2n" path="res://features/enemies/Enemy.gd" id="1_ias5w"]
 [ext_resource type="Texture2D" uid="uid://dcwv7sj7j3mc" path="res://features/enemies/sprites/Enemy_wolf_idle.png" id="1_tm7dh"]
 [ext_resource type="Texture2D" uid="uid://c6624g0ilchqy" path="res://features/enemies/sprites/Enemy_wolf_die.png" id="2_2tbop"]
 [ext_resource type="Shader" uid="uid://m1ltbyotomum" path="res://fx/Shader/character_blink.tres" id="2_dj6gq"]
 [ext_resource type="Texture2D" uid="uid://bltw0xed8it52" path="res://features/enemies/sprites/Enemy_wolf_run.png" id="3_7fywp"]
+[ext_resource type="Texture2D" uid="uid://c0hs567d2l1mq" path="res://features/enemies/sprites/Enemy_wolf_shoot.png" id="5_s3s4r"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_37vms"]
 radius = 6.0
@@ -97,6 +98,18 @@ region = Rect2(192, 0, 32, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_3h3kk"]
 atlas = ExtResource("1_tm7dh")
 region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8j7fb"]
+atlas = ExtResource("5_s3s4r")
+region = Rect2(38, 0, 38, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hhgrg"]
+atlas = ExtResource("5_s3s4r")
+region = Rect2(76, 0, 38, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gi647"]
+atlas = ExtResource("5_s3s4r")
+region = Rect2(0, 0, 38, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3skuo"]
 atlas = ExtResource("3_7fywp")
@@ -191,6 +204,29 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_8j7fb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hhgrg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gi647")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gi647")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gi647")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gi647")
+}],
+"loop": false,
+"name": &"Shoot",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_3skuo")
 }, {
 "duration": 1.0,
@@ -230,8 +266,7 @@ target_position = Vector2(0, 10)
 material = SubResource("ShaderMaterial_s3s4r")
 position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_7fywp")
-animation = &"Idle"
-frame_progress = 0.7916037
+animation = &"Shoot"
 
 [node name="Area2D_PlayerDetector" type="Area2D" parent="."]
 collision_layer = 0
