@@ -5,7 +5,7 @@ enum Type { POWER, HEALTH, INVULN, UTILITY }
 
 @export var id: String
 @export var title: String
-@export var desc: String
+@export var description: String
 @export var type: Type = Type.POWER
 @export var icon: Texture2D
 @export var rarity: float = 1.0

@@ -1,0 +1,19 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://c541r7vtyqlsy"]
+
+[ext_resource type="Shader" uid="uid://bmjbs6qoej2qe" path="res://fx/Shader/tree.gdshader" id="1_ntmyg"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_0i84y"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_d0wxg"]
+noise = SubResource("FastNoiseLite_0i84y")
+seamless = true
+
+[resource]
+shader = ExtResource("1_ntmyg")
+shader_parameter/render_noise = false
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_d0wxg")
+shader_parameter/amplitude = 0.01999999955296
+shader_parameter/time_scale = 0.04
+shader_parameter/noise_scale = 0.00099999997469999
+shader_parameter/rotation_strength = 1.0
+shader_parameter/rotation_pivot = Vector2(0.5, 1)

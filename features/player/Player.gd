@@ -53,8 +53,15 @@ var equippedItem: ItemData
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var shooting_point: Node2D = $Shooting_Point
 @onready var playerCamera: Camera2D = %Camera2D
+@onready var sfx_audio_stream_player_2d: AudioStreamPlayer2D = $SFXAudioStreamPlayer2D
 
 var bulletScene: PackedScene = preload("uid://dk5eg5ivs8brj")
+
+# SOUNDS
+var bulletSound: AudioStream = preload("uid://do2n3xe242wsi")
+var jumpSound: AudioStream = preload("uid://c4bm10lvna2mq")
+var landSound: AudioStream = preload("uid://e17vjaok2oaj")
+var hitSound: AudioStream = preload("uid://xkorhfakubnt")
 
 signal playerHealthUpdated(newValue, maxValue)
 
@@ -192,6 +199,9 @@ func ApplyDamage(damage: int):
 		
 	currentHealth -= damage
 	
+	sfx_audio_stream_player_2d.stream = hitSound
+	sfx_audio_stream_player_2d.play()
+	
 	StartBlink()
 	GameManager.StartCameraShake()
 	
@@ -203,6 +213,7 @@ func ApplyDamage(damage: int):
 				
 func Shoot():
 	var bulletInstance = GameManager.SpawnVFX(bulletScene, shooting_point.global_position) as BulletController
+	
 	bulletInstance.damage = 30
 	
 	# Wenn der player nach links guckt, muss die Bullet auch in die Richtung:
@@ -210,6 +221,14 @@ func Shoot():
 		bulletInstance.direction = -1
 	else:
 		bulletInstance.direction = 1
+		
+	var audio_player = AudioStreamPlayer2D.new()
+	audio_player.stream = bulletSound
+	get_tree().root.add_child(audio_player)
+	audio_player.play()
+	audio_player.global_position = shooting_point.position
+	await audio_player.finished
+	audio_player.queue_free()
 
 func TryToShoot():
 	if isShooting:
@@ -236,11 +255,15 @@ func UpdateBlink(newValue: float):
 	
 func PlayJumpUpVFX():
 	var vfxToSpawn = preload("res://fx/vfx_jump_up.tscn")
-	GameManager.SpawnVFX(vfxToSpawn, global_position)	
+	GameManager.SpawnVFX(vfxToSpawn, global_position)
+	sfx_audio_stream_player_2d.stream = jumpSound
+	sfx_audio_stream_player_2d.play()
 	
 func PlayLandVFX():
 	var vfxToSpawn = preload("res://fx/vfx_land.tscn")
-	GameManager.SpawnVFX(vfxToSpawn, global_position)			
+	GameManager.SpawnVFX(vfxToSpawn, global_position)	
+	sfx_audio_stream_player_2d.stream = landSound
+	sfx_audio_stream_player_2d.play()
 	
 func PlayFireVFX():
 	var vfxToSpawn = preload("res://fx/vfx_Shoot_Fire.tscn")
@@ -248,3 +271,8 @@ func PlayFireVFX():
 	
 	if animated_sprite_2d.flip_h:
 		vfxInstance.scale.x = -1
+
+func _on_animated_sprite_2d_frame_changed() -> void:
+	if animated_sprite_2d.animation == "Run":
+		if animated_sprite_2d.frame % 2 == 0:
+			FootstepSoundManager.playFootstep(global_position)

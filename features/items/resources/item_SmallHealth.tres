@@ -6,5 +6,6 @@
 script = ExtResource("1_368vp")
 id = "small_health"
 title = "Small Health"
+description = "+10 Leben"
 type = 1
 metadata/_custom_type_script = "uid://bo6b6wgs72s4"

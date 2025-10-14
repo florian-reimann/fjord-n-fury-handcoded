@@ -1,55 +1,79 @@
-[gd_scene load_steps=7 format=3 uid="uid://b2oht7viyiv22"]
+[gd_scene load_steps=11 format=3 uid="uid://b2oht7viyiv22"]
 
 [ext_resource type="Theme" uid="uid://k2grjrrdlvmy" path="res://ui/theme.tres" id="1_gg3gk"]
 [ext_resource type="Script" uid="uid://bt0bc1qfemjtq" path="res://features/items/ChooseCardPanel.gd" id="1_tfkv8"]
-[ext_resource type="Texture2D" uid="uid://c7gkvy26v0yjd" path="res://features/items/card.png" id="2_tfkv8"]
+[ext_resource type="Texture2D" uid="uid://dqie25w44cr41" path="res://features/items/card.png" id="2_mamoj"]
+[ext_resource type="Texture2D" uid="uid://dqie25w44cr41" path="res://features/items/Card.png" id="2_tfkv8"]
+[ext_resource type="Texture2D" uid="uid://gacp4vh5bfxb" path="res://features/levels/background.png" id="4_2ibno"]
+[ext_resource type="FontFile" uid="uid://be8iniopvivdd" path="res://ui/font/PixelSmall.ttf" id="4_dd3cc"]
+[ext_resource type="FontFile" uid="uid://dyntle87ihdb8" path="res://ui/font/Tiny_Talk.ttf" id="6_lpra8"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tfkv8"]
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 1, 1, 1)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tfkv8"]
+texture = ExtResource("2_tfkv8")
+region_rect = Rect2(90, 0, 90, 134)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_577mu"]
-atlas = ExtResource("2_tfkv8")
-region = Rect2(0, 0, 150, 220)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_kttwt"]
+texture = ExtResource("2_mamoj")
+region_rect = Rect2(0, 0, 90, 134)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_llari"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_577mu")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2ibno"]
+texture = ExtResource("2_tfkv8")
+region_rect = Rect2(0, 0, 90, 134)
 
 [node name="CardPanel" type="Button"]
-offset_right = 150.0
-offset_bottom = 220.0
+offset_right = 94.0
+offset_bottom = 138.0
 size_flags_horizontal = 3
-size_flags_vertical = 0
-theme_override_styles/focus = SubResource("StyleBoxFlat_tfkv8")
+size_flags_vertical = 3
+theme_override_styles/normal = SubResource("StyleBoxTexture_tfkv8")
+theme_override_styles/hover = SubResource("StyleBoxTexture_kttwt")
+theme_override_styles/focus = SubResource("StyleBoxTexture_2ibno")
 script = ExtResource("1_tfkv8")
 
 [node name="CardTitle" type="Label" parent="."]
 unique_name_in_owner = true
 z_index = 10
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
 offset_left = 10.0
-offset_top = 106.0
-offset_right = 140.0
-offset_bottom = 114.0
+offset_top = 16.0
+offset_right = -12.0
+offset_bottom = 30.0
+grow_horizontal = 2
 theme = ExtResource("1_gg3gk")
-theme_override_colors/font_color = Color(0.019607844, 0.14901961, 0.24705882, 1)
+theme_override_colors/font_color = Color(0.84313726, 0.70980394, 0.5803922, 1)
+theme_override_fonts/font = ExtResource("4_dd3cc")
+theme_override_font_sizes/font_size = 16
 text = "Cardname"
 horizontal_alignment = 1
 
-[node name="CardIcon" type="Sprite2D" parent="."]
-z_index = 10
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 32.0
+offset_right = 77.0
+offset_bottom = 72.0
+texture = ExtResource("4_2ibno")
+expand_mode = 2
+stretch_mode = 6
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("SpriteFrames_llari")
-centered = false
+[node name="CardDescription" type="Label" parent="."]
+unique_name_in_owner = true
+z_index = 10
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 10.0
+offset_top = 80.0
+offset_right = -12.0
+offset_bottom = 94.0
+grow_horizontal = 2
+theme = ExtResource("1_gg3gk")
+theme_override_colors/font_color = Color(0.84313726, 0.70980394, 0.5803922, 1)
+theme_override_constants/line_spacing = -2
+theme_override_fonts/font = ExtResource("6_lpra8")
+theme_override_font_sizes/font_size = 4
+text = "Beschreibung der Karte"
+horizontal_alignment = 1
+autowrap_mode = 2

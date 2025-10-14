@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://do2n3xe242wsi"
+path="res://.godot/imported/556 Single Isolated MP3.mp3-f5c3e2020c39e0984386f87a0a0360d5.mp3str"
+
+[deps]
+
+source_file="res://features/bullet/sounds/556 Single Isolated MP3.mp3"
+dest_files=["res://.godot/imported/556 Single Isolated MP3.mp3-f5c3e2020c39e0984386f87a0a0360d5.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

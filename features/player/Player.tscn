@@ -160,7 +160,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"Run",
-"speed": 5.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -223,9 +223,7 @@ shape = SubResource("CapsuleShape2D_yo8gm")
 material = SubResource("ShaderMaterial_lc4lv")
 position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_cf05b")
-animation = &"Shoot_Stand"
-frame = 2
-frame_progress = 1.0
+animation = &"Run"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 unique_name_in_owner = true
@@ -236,3 +234,7 @@ drag_horizontal_enabled = true
 
 [node name="Shooting_Point" type="Node2D" parent="."]
 position = Vector2(22, -12)
+
+[node name="SFXAudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+
+[connection signal="frame_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_frame_changed"]

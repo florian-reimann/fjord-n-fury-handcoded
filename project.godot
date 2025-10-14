@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 GameManager="*res://autoload/GameManager.gd"
 ItemDB="*res://features/items/ItemDB.gd"
 GlobalSignals="*res://autoload/GlobalSignals.gd"
+FootstepSoundManager="*res://features/player/FootstepSoundManager.gd"
 
 [debug]
 

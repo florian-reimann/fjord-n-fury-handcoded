@@ -40,6 +40,7 @@ func onCardChoices(choices: Array[ItemData]) -> void:
 	cards.clear()
 	
 	print(choices)
+	await  get_tree().create_timer(0.5).timeout
 	pick_card_ui.visible = true
 	GlobalSignals.setGameState.emit(GameManager.GameState.MENU_OPEN)
 	# Die drei Karten zur Auswahl anzeigen:
@@ -47,6 +48,8 @@ func onCardChoices(choices: Array[ItemData]) -> void:
 		print(cardItem.title)
 		var new_card: CardPanel = CHOOSE_CARD_PANEL.instantiate()
 		new_card.title = cardItem.title
+		new_card.description = cardItem.description
+		#new_card.cardImage = cardItem.icon
 		choose_card_h_box_container.add_child(new_card)
 		cards.append(new_card)
 		new_card.pressed.connect(PickCardAndClose.bind(cardItem))
