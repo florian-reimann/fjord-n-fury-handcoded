@@ -18,8 +18,6 @@ const SPEED: int = 170
 const JUMP_VELOCITY: int = -450
 const DASH_SPEED: int = 400
 const GRAVITY: int = 1800
-const GRAVITY_WALL: int = 700 # Wenn man an der Wand "runterrutscht"
-const WALL_JUMP_PUSH_FORCE: int = 150 # Abdrücken von der Wand
 
 # Coyote Time: Kurz nach Plattform-Verlassen noch springen können  
 const COYOTE_TIME: float = 0.15
@@ -34,6 +32,21 @@ const MAX_JUMPS: int = 2  # Boden-Jump + Luft-Jump
 var coyote_timer: float = 0.0      # zählt runter, wenn in der Luft
 var jump_buffer_timer: float = 0.0 # merkt Jump-Input kurz vor Landung
 var jumps_left: int = MAX_JUMPS    # wie viele Sprünge sind noch übrig?
+
+# WALL MOVEMENT
+const WALL_SLIDE_MAX_SPEED: int = 60
+const WALL_JUMP_PUSH_FORCE: int = 240 # Abdrücken von der Wand
+
+# Etwas Zeit, um noch einen Walljump auszuführen, obwohl man nicht mehr an der Wand ist
+var wall_contact_coyote: float = 0.0 # Zeit left
+const WALL_CONTACT_COYOTE_TIME: float = 0.2 #Soviel Zeit hat man
+
+# Die Zeit, die nur für den Wall-Jump (push Force) genutzt wird und keine andere horizontale Bewegung
+var wall_jump_lock: float = 0.0
+const WALL_JUMP_LOCK_TIME: float = 0.5
+
+# Hilfsvariable für den Walljump, um in die entgegengesetzt Richtung zu springen
+var look_dir_x: int = 1
 
 # True/False ist in der Luft
 var AirborneLastFrame: bool
@@ -86,7 +99,7 @@ func _physics_process(_delta: float) -> void:
 	elif AirborneLastFrame:
 		PlayLandVFX()
 		AirborneLastFrame = false
-		
+	
 	if is_on_floor():
 		# Am Boden: volle Coyote-Zeit, und alle Sprünge wieder verfügbar
 		coyote_timer = COYOTE_TIME
@@ -110,10 +123,27 @@ func _physics_process(_delta: float) -> void:
 	# - 2. Sprung in der Luft verbraucht 1
 	var can_air_jump := not is_on_floor() and jumps_left > 0
 
-	# Bedingungen:
-	# - Es wurde kürzlich gesprungen (Buffer > 0)
-	# - UND entweder Boden/Coyote verfügbar ODER ein Luftsprung ist erlaubt
-	if jump_buffer_timer > 0.0 and (can_ground_like_jump or can_air_jump):
+	if wall_jump_lock > 0.0:
+		wall_jump_lock -= _delta
+	
+	# Richtung des Spielers:	
+	var direction: float = Input.get_axis("Left","Right")
+	
+	# Laufen:
+	if wall_jump_lock <= 0.0:
+		if direction != 0:
+			velocity.x = direction * SPEED
+		else:
+			velocity.x = 0
+			
+	if jump_buffer_timer > 0.0 and not is_on_floor() and wall_contact_coyote > 0.0:
+		animated_sprite_2d.play("Jump")
+		velocity.y = JUMP_VELOCITY
+		velocity.x = -look_dir_x * WALL_JUMP_PUSH_FORCE
+		wall_jump_lock = WALL_JUMP_LOCK_TIME
+		wall_contact_coyote = 0.0
+		
+	elif jump_buffer_timer > 0.0 and (can_ground_like_jump or can_air_jump):
 		# Sprung ausführen
 		animated_sprite_2d.play("Jump")
 		velocity.y = JUMP_VELOCITY
@@ -127,21 +157,21 @@ func _physics_process(_delta: float) -> void:
 		# Nach dem Sprung zählt Coyote nicht mehr (Verhindert „Dauer-Coyote“)
 		coyote_timer = 0.0
 		
-	# Richtung des Spielers:	
-	var direction: float = Input.get_axis("Left","Right")
-	
-	# Laufen:
-	if direction != 0:
-		velocity.x = direction * SPEED
-	else:
-		velocity.x = 0
-		
 	# Runter von der OneWay Platform:
 	if Input.is_action_just_pressed("Down") && is_on_floor():
 		position.y += 3
 		
 	if Input.is_action_just_pressed("Shoot") || Input.is_action_pressed("Shoot"):
 		TryToShoot()
+		
+	# Wall-Slide:
+	# Man ist NICHT auf dem Boden, man fällt, man ist an der Wand und man bewegt sich zur Wand:
+	if !is_on_floor() and velocity.y > 0 and is_on_wall() and velocity.x != 0:
+		look_dir_x = sign(velocity.x)
+		wall_contact_coyote = WALL_CONTACT_COYOTE_TIME #reset coyote
+		velocity.y = min(velocity.y, WALL_SLIDE_MAX_SPEED)
+	else:
+		wall_contact_coyote -= _delta
 		
 	# Bewegung ausführen
 	move_and_slide()

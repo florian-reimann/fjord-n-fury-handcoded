@@ -1,12 +1,48 @@
-[gd_scene load_steps=11 format=3 uid="uid://b75p3f2pnagcc"]
+[gd_scene load_steps=19 format=3 uid="uid://b75p3f2pnagcc"]
 
-[ext_resource type="AudioStream" uid="uid://co2i5cocqm0ia" path="res://assets/music/01 Fjord n Fury Theme 8Bit.wav" id="1_nmrkx"]
 [ext_resource type="Script" uid="uid://d1nsrir02ff3u" path="res://ui/MainMenu.gd" id="1_rn8js"]
+[ext_resource type="AudioStream" uid="uid://chxosxjuthsjs" path="res://assets/music/05 Fjord n Fury - Epic Theme.wav" id="1_uvwf2"]
 [ext_resource type="Texture2D" uid="uid://gacp4vh5bfxb" path="res://features/levels/background.png" id="3_8v85u"]
+[ext_resource type="Texture2D" uid="uid://dv6uvf3xq755d" path="res://features/levels/Cloud01.png" id="4_uvwf2"]
 [ext_resource type="Theme" uid="uid://k2grjrrdlvmy" path="res://ui/theme.tres" id="4_x262b"]
 [ext_resource type="PackedScene" uid="uid://1fvets1arxnj" path="res://ui/components/Button.tscn" id="5_x262b"]
+[ext_resource type="Shader" uid="uid://0sbv74jjwnqp" path="res://fx/Shader/vignette.gdshader" id="5_youui"]
 [ext_resource type="Shader" uid="uid://bt4y8uiqyr6ui" path="res://features/levels/shader_water.gdshader" id="6_g5fyd"]
 [ext_resource type="Texture2D" uid="uid://cqempit8pf11o" path="res://assets/blank.png" id="7_uwsby"]
+
+[sub_resource type="Curve" id="Curve_uvwf2"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.008116841), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_yo8gm"]
+curve = SubResource("Curve_uvwf2")
+
+[sub_resource type="Gradient" id="Gradient_youui"]
+offsets = PackedFloat32Array(0.48497853, 0.57939917)
+colors = PackedColorArray(1, 1, 1, 0.23529412, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_6t0ec"]
+gradient = SubResource("Gradient_youui")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_58pe3"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(500, 1, 1)
+gravity = Vector3(-45, 98, 0)
+scale_max = 4.0
+color_initial_ramp = SubResource("GradientTexture1D_6t0ec")
+alpha_curve = SubResource("CurveTexture_yo8gm")
+turbulence_enabled = true
+turbulence_influence_min = 0.020000001
+turbulence_influence_max = 0.080000006
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_58pe3"]
+shader = ExtResource("5_youui")
+shader_parameter/radius = 0.6000000285
+shader_parameter/softness = 0.6000000285
+shader_parameter/intensity = 0.70000003325
+shader_parameter/contrast = 1.1000000285
+shader_parameter/vignette_color = Color(0, 0, 0, 1)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_uvwf2"]
 frequency = 0.03
@@ -24,7 +60,7 @@ shader_parameter/pixel_size = 10.0
 [node name="Node2D" type="Node2D"]
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("1_nmrkx")
+stream = ExtResource("1_uvwf2")
 volume_db = -5.0
 autoplay = true
 
@@ -49,6 +85,37 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_8v85u")
 
+[node name="VFX Foreground" type="Parallax2D" parent="CanvasLayer/Control"]
+z_index = 50
+scroll_scale = Vector2(0, 0)
+repeat_size = Vector2(480, 0)
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="CanvasLayer/Control/VFX Foreground"]
+amount = 200
+lifetime = 10.0
+preprocess = 30.0
+process_material = SubResource("ParticleProcessMaterial_58pe3")
+
+[node name="Vignette" type="Parallax2D" parent="CanvasLayer/Control"]
+z_index = -10
+scroll_scale = Vector2(0, 0)
+repeat_size = Vector2(480, 0)
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/Control/Vignette"]
+z_index = 20
+material = SubResource("ShaderMaterial_58pe3")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_right = 480.0
+offset_bottom = 270.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
 [node name="Water Background" type="Parallax2D" parent="CanvasLayer/Control"]
 scroll_scale = Vector2(0, 0)
 repeat_size = Vector2(480, 0)
@@ -58,6 +125,17 @@ material = SubResource("ShaderMaterial_youui")
 position = Vector2(0, 168)
 scale = Vector2(3, 1)
 texture = ExtResource("7_uwsby")
+centered = false
+
+[node name="Clouds" type="Parallax2D" parent="CanvasLayer/Control"]
+scroll_offset = Vector2(0, 48)
+repeat_size = Vector2(419, 0)
+autoscroll = Vector2(10, 0)
+repeat_times = 4
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasLayer/Control/Clouds"]
+position = Vector2(0, -32)
+texture = ExtResource("4_uvwf2")
 centered = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control"]
