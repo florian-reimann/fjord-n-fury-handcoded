@@ -1,5 +1,4 @@
 extends CharacterBody2D
-class_name PlayerController
 
 # VARIABLEN:
 
@@ -54,10 +53,6 @@ var AirborneLastFrame: bool
 var isShooting: bool = false
 const SHOOTING_DURATION: float = 0.25
 
-var currentHealth: 
-	set(new_value):
-		currentHealth = new_value
-		emit_signal("playerHealthUpdated", currentHealth, MAX_HEALTH)
 		
 const MAX_HEALTH: int = 100
 
@@ -76,11 +71,9 @@ var jumpSound: AudioStream = preload("uid://c4bm10lvna2mq")
 var landSound: AudioStream = preload("uid://e17vjaok2oaj")
 var hitSound: AudioStream = preload("uid://xkorhfakubnt")
 
-signal playerHealthUpdated(newValue, maxValue)
-
 func _ready() -> void:
-	currentHealth = MAX_HEALTH
-	GameManager.player = self
+
+
 	GameManager.playerOriginPosition = position
 	
 	GameManager.playerCamera = playerCamera

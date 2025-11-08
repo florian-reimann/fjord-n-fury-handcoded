@@ -1,6 +1,6 @@
 [gd_scene load_steps=35 format=3 uid="uid://ch530bw3ar334"]
 
-[ext_resource type="Script" uid="uid://bsm8f7t35gmtf" path="res://features/player/Player.gd" id="1_mjcdy"]
+[ext_resource type="Script" uid="uid://y0omkf3rj7qc" path="res://features/player/player_statemachine.gd" id="1_68glg"]
 [ext_resource type="Shader" uid="uid://m1ltbyotomum" path="res://fx/Shader/character_blink.tres" id="2_68glg"]
 [ext_resource type="Texture2D" uid="uid://bno34gr52o5w0" path="res://features/player/sprites/fury_idle.png" id="2_u46th"]
 [ext_resource type="Texture2D" uid="uid://cqhvfws33c8s3" path="res://features/player/sprites/Fury_jump.png" id="3_214e2"]
@@ -8,10 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://sygmshp6jn0" path="res://features/player/sprites/Fury_shoot.png" id="5_47nop"]
 [ext_resource type="Texture2D" uid="uid://dvvdpxet14aoq" path="res://features/player/sprites/Fury_jump_shoot.png" id="5_vld8p"]
 [ext_resource type="Texture2D" uid="uid://berey1ohsd6ct" path="res://features/player/sprites/Fury_run_shoot.png" id="6_68glg"]
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yo8gm"]
-radius = 6.0
-height = 24.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lc4lv"]
 shader = ExtResource("2_68glg")
@@ -211,19 +207,23 @@ animations = [{
 "speed": 10.0
 }]
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yo8gm"]
+radius = 6.0
+height = 24.0
+
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 2
-script = ExtResource("1_mjcdy")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -12)
-shape = SubResource("CapsuleShape2D_yo8gm")
+script = ExtResource("1_68glg")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_lc4lv")
 position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_cf05b")
-animation = &"Run"
+animation = &"Jump"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -12)
+shape = SubResource("CapsuleShape2D_yo8gm")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 unique_name_in_owner = true
@@ -236,5 +236,21 @@ drag_horizontal_enabled = true
 position = Vector2(22, -12)
 
 [node name="SFXAudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+
+[node name="CoyoteTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 0.09999999999999999
+one_shot = true
+
+[node name="DashCooldown" type="Timer" parent="."]
+unique_name_in_owner = true
+process_callback = 0
+wait_time = 0.09999999999999999
+one_shot = true
+
+[node name="WallSlideRayCast" type="RayCast2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -16)
+target_position = Vector2(16, 0)
 
 [connection signal="frame_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_frame_changed"]
