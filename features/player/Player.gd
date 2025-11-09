@@ -1,66 +1,31 @@
 extends CharacterBody2D
+class_name PlayerController
 
-# VARIABLEN:
+#STATE:
+enum STATE { 
+	FALL, 
+	FLOOR,
+	IDLE, 
+	RUN, 
+	JUMP,
+	DOUBLE_JUMP,
+	HURT, 
+	LEDGE_CLIMP,
+	WALL_SLIDE,
+	WALL_JUMP,
+	WALL_CLIMB,
+	DASH,
+	TURNING,
+	DEAD
+}
 
-# Mögliche States
-enum PlayerState { IDLE, RUN, JUMP, FALL, DASH, HURT, DEAD, NORMAL }
-
-var currentState: PlayerState = PlayerState.NORMAL:
-	set(new_value):
-		currentState = new_value
-		match currentState:
-			PlayerState.DEAD:
-				set_collision_layer_value(2, false)
-
-# Basic Movement Variables
-const SPEED: int = 170
-const JUMP_VELOCITY: int = -450
-const DASH_SPEED: int = 400
-const GRAVITY: int = 1800
-
-# Coyote Time: Kurz nach Plattform-Verlassen noch springen können  
-const COYOTE_TIME: float = 0.15
-
-# Jump Buffer: z. B. Wenn man kurz vor dem Boden erneut spring
-const JUMP_BUFFER: float = 0.1
-
-# Double Jump System
-const MAX_JUMPS: int = 2  # Boden-Jump + Luft-Jump
-
-# --- Laufzeitvariablen ---
-var coyote_timer: float = 0.0      # zählt runter, wenn in der Luft
-var jump_buffer_timer: float = 0.0 # merkt Jump-Input kurz vor Landung
-var jumps_left: int = MAX_JUMPS    # wie viele Sprünge sind noch übrig?
-
-# WALL MOVEMENT
-const WALL_SLIDE_MAX_SPEED: int = 60
-const WALL_JUMP_PUSH_FORCE: int = 240 # Abdrücken von der Wand
-
-# Etwas Zeit, um noch einen Walljump auszuführen, obwohl man nicht mehr an der Wand ist
-var wall_contact_coyote: float = 0.0 # Zeit left
-const WALL_CONTACT_COYOTE_TIME: float = 0.2 #Soviel Zeit hat man
-
-# Die Zeit, die nur für den Wall-Jump (push Force) genutzt wird und keine andere horizontale Bewegung
-var wall_jump_lock: float = 0.0
-const WALL_JUMP_LOCK_TIME: float = 0.5
-
-# Hilfsvariable für den Walljump, um in die entgegengesetzt Richtung zu springen
-var look_dir_x: int = 1
-
-# True/False ist in der Luft
-var AirborneLastFrame: bool
-
-var isShooting: bool = false
-const SHOOTING_DURATION: float = 0.25
-
-		
-const MAX_HEALTH: int = 100
-
-var equippedItem: ItemData
-	
+# NODES:
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var shooting_point: Node2D = $Shooting_Point
 @onready var playerCamera: Camera2D = %Camera2D
+@onready var wall_slide_ray_cast: RayCast2D = %WallSlideRayCast
+@onready var coyote_timer: Timer = %CoyoteTimer
+@onready var dash_cooldown: Timer = %DashCooldown
 @onready var sfx_audio_stream_player_2d: AudioStreamPlayer2D = $SFXAudioStreamPlayer2D
 
 var bulletScene: PackedScene = preload("uid://dk5eg5ivs8brj")
@@ -71,153 +36,254 @@ var jumpSound: AudioStream = preload("uid://c4bm10lvna2mq")
 var landSound: AudioStream = preload("uid://e17vjaok2oaj")
 var hitSound: AudioStream = preload("uid://xkorhfakubnt")
 
+# CONSTANTEN:
+const FALL_VELOCITY: float = 1500.0
+const FALL_GRAVITY: float = 1500.0
+const WALK_VELOCITY: float = 200.0
+const JUMP_VELOCITY: float = -500.0
+const JUMP_DECELERATION: float = 1500.0
+const DOUBLE_JUMP_VELOCITY: float = -400.0
+const WALL_SLIDE_GRAVITY: float = 200.0
+const WALL_SLIDE_VELOCITY: float = 400.0
+const WALL_JUMP_LENGTH: float = 30.0
+const WALL_JUMP_VELOCITY: float = -500.0
+const WALL_CLIMB_VELOCITY: float = -300.0
+const WALL_CLIMB_LENGTH: float = 65.0
+const DASH_LENGTH: float = 100.0
+const DASH_VELOCITY: float = 1500.0
+
+const MAX_HEALTH: int = 100
+const SHOOTING_DURATION: float = 0.25
+
+# SIGNALS:
+signal playerHealthUpdated(newValue, maxValue)
+
+# VARIABLEN:
+var active_state:= STATE.FALL
+var isShooting: bool = false
+var can_double_jump: bool = false
+var can_dash: bool = false
+var dash_jump_buffer: bool = false
+var facing_direction: float = 1.0
+var saved_position: Vector2 = Vector2.ZERO
+var equippedItem: ItemData
+
+var currentHealth: 
+	set(new_value):
+		currentHealth = new_value
+		emit_signal("playerHealthUpdated", currentHealth, MAX_HEALTH)
+
 func _ready() -> void:
-
-
-	GameManager.playerOriginPosition = position
+	# Initialisiere den Ausgangs-STATE:
+	switch_state(active_state)
 	
+	currentHealth = MAX_HEALTH
+	
+	GameManager.player = self
 	GameManager.playerCamera = playerCamera
 	GameManager.playerCameraOriginOffset = playerCamera.offset
 
-func _process(_delta: float) -> void:
-	updateAnimation()
-
 func _physics_process(_delta: float) -> void:
-	if currentState == PlayerState.DEAD:
+	if active_state == STATE.DEAD:
 		return
-	# GRAVITY: 
-	if not is_on_floor():
-		velocity.y += GRAVITY * _delta
-		AirborneLastFrame = true
-	elif AirborneLastFrame:
-		PlayLandVFX()
-		AirborneLastFrame = false
-	
-	if is_on_floor():
-		# Am Boden: volle Coyote-Zeit, und alle Sprünge wieder verfügbar
-		coyote_timer = COYOTE_TIME
-		jumps_left = MAX_JUMPS
-	else:
-		# In der Luft: Coyote-Zeit läuft ab
-		coyote_timer = maxf(0.0, coyote_timer - _delta)
-		
-	# Setze den Jump-Buffer, für kleine Toleranz, falls man minimal zu früh die Sprungtaste drückt:
-	if Input.is_action_just_pressed("Jump"):
-		jump_buffer_timer = JUMP_BUFFER
-	else:
-		jump_buffer_timer = maxf(0.0, jump_buffer_timer - _delta)
-
-	# Boden-ähnlicher Sprung möglich? (am Boden ODER noch in Coyote-Zeit)
-	var can_ground_like_jump := is_on_floor() or (coyote_timer > 0.0)
-
-	# Luftsprung möglich? (nicht am Boden, noch Sprünge übrig)
-	# Hinweis: Wenn MAX_JUMPS = 2, bedeutet das in der Praxis:
-	# - 1. Sprung (Boden oder Coyote) verbraucht NICHT jumps_left (wir resetten am Boden ja auf 2)
-	# - 2. Sprung in der Luft verbraucht 1
-	var can_air_jump := not is_on_floor() and jumps_left > 0
-
-	if wall_jump_lock > 0.0:
-		wall_jump_lock -= _delta
-	
-	# Richtung des Spielers:	
-	var direction: float = Input.get_axis("Left","Right")
-	
-	# Laufen:
-	if wall_jump_lock <= 0.0:
-		if direction != 0:
-			velocity.x = direction * SPEED
-		else:
-			velocity.x = 0
-			
-	if jump_buffer_timer > 0.0 and not is_on_floor() and wall_contact_coyote > 0.0:
-		animated_sprite_2d.play("Jump")
-		velocity.y = JUMP_VELOCITY
-		velocity.x = -look_dir_x * WALL_JUMP_PUSH_FORCE
-		wall_jump_lock = WALL_JUMP_LOCK_TIME
-		wall_contact_coyote = 0.0
-		
-	elif jump_buffer_timer > 0.0 and (can_ground_like_jump or can_air_jump):
-		# Sprung ausführen
-		animated_sprite_2d.play("Jump")
-		velocity.y = JUMP_VELOCITY
-		jump_buffer_timer = 0.0     # Buffer verbraucht
-		jumps_left -= 1
-		
-		#Boden VFX nur abspielen, wenn man auf dem Boden ist:
-		if can_ground_like_jump:
-			PlayJumpUpVFX()
-
-		# Nach dem Sprung zählt Coyote nicht mehr (Verhindert „Dauer-Coyote“)
-		coyote_timer = 0.0
-		
-	# Runter von der OneWay Platform:
-	if Input.is_action_just_pressed("Down") && is_on_floor():
-		position.y += 3
-		
-	if Input.is_action_just_pressed("Shoot") || Input.is_action_pressed("Shoot"):
-		TryToShoot()
-		
-	# Wall-Slide:
-	# Man ist NICHT auf dem Boden, man fällt, man ist an der Wand und man bewegt sich zur Wand:
-	if !is_on_floor() and velocity.y > 0 and is_on_wall() and velocity.x != 0:
-		look_dir_x = sign(velocity.x)
-		wall_contact_coyote = WALL_CONTACT_COYOTE_TIME #reset coyote
-		velocity.y = min(velocity.y, WALL_SLIDE_MAX_SPEED)
-	else:
-		wall_contact_coyote -= _delta
-		
-	# Bewegung ausführen
+	process_state(_delta)
 	move_and_slide()
-	
+
 	# Reset Player, wenn eine Fallgrenze überschreitet:
 	if position.y >= 800:
 		GameManager.RespawnPlayer()
+
+func switch_state(to_state: STATE) -> void:
+	var previous_state: STATE = active_state
+	active_state = to_state
 	
-func updateAnimation():
-	if currentState == PlayerState.DEAD:
-		return
-	
-	if velocity.x != 0:
-		animated_sprite_2d.flip_h = velocity.x < 0
-		# Je nach Laufrichtung muss der Shooting-Pointer verschoben werden:
-		if velocity.x < 0:
-			shooting_point.position.x = -22
-		else:
-			shooting_point.position.x = 22
+	# Dieser Code wird einmalig beim Wechsel des States ausgeführt:
+	match active_state:
+		STATE.FALL:
+			if previous_state != STATE.DOUBLE_JUMP:
+				if isShooting:
+					animated_sprite_2d.play("Shoot_Jump")
+				else:
+					animated_sprite_2d.play("Jump") # Später: Fall
+			if previous_state == STATE.FLOOR:
+				coyote_timer.start()
 		
-	if is_on_floor():
-		if abs(velocity.x) >= 0.1:
-			
-			var playAnimationFrame = animated_sprite_2d.frame
-			var playAnimationName = animated_sprite_2d.animation
-			
+		STATE.FLOOR:
+			can_double_jump = true
+			can_dash = true
+		
+		STATE.JUMP:
 			if isShooting:
-				animated_sprite_2d.play("Shoot_Run")
-				
-				# Syncing Shoot Animation, falls man vorher gerannt ist 
-				# (direkt bei dem richtigen Frame beginnen)
-				if playAnimationName == "Run":
-					animated_sprite_2d.frame = playAnimationFrame
+				animated_sprite_2d.play("Shoot_Jump")
 			else:
-				# Animation zu Ende spielen:
-				if playAnimationName == "Shoot_Run" && animated_sprite_2d.is_playing():
-					pass
+				animated_sprite_2d.play("Jump")
+			PlayJumpUpVFX()
+			velocity.y = JUMP_VELOCITY
+			coyote_timer.stop()
+		
+		STATE.DOUBLE_JUMP:
+			animated_sprite_2d.play("Jump")
+			velocity.y = DOUBLE_JUMP_VELOCITY
+			can_double_jump = false
+			
+		STATE.WALL_SLIDE:
+			animated_sprite_2d.play("Jump") # Später Wall Slide
+			velocity.y = 0
+			can_double_jump = true
+			can_dash = true
+			
+		STATE.WALL_JUMP:
+			animated_sprite_2d.play("Jump")
+			velocity.y = WALL_JUMP_VELOCITY
+			set_facing_direction(-facing_direction)
+			saved_position = position
+			
+		STATE.WALL_CLIMB:
+			animated_sprite_2d.play("Jump") # Später Wall Climp
+			velocity.y = WALL_CLIMB_VELOCITY
+			saved_position = position
+			
+		STATE.DASH:
+			if dash_cooldown.time_left > 0:
+				active_state = previous_state
+				return
+			animated_sprite_2d.play("Run") # Später Dash
+			### Todo: DASH VFX ###
+			velocity.y = 0
+			set_facing_direction(signf(Input.get_axis("Left", "Right")))
+			velocity.x = facing_direction * DASH_VELOCITY
+			saved_position = position
+			can_dash = previous_state == STATE.FLOOR or previous_state == STATE.WALL_SLIDE
+			dash_jump_buffer = false
+
+func process_state(_delta: float) -> void:
+	match active_state:
+		STATE.FALL:
+			if Input.is_action_just_pressed("Shoot") or Input.is_action_pressed("Shoot"):
+				TryToShoot()
+					
+			velocity.y = move_toward(velocity.y, FALL_VELOCITY, FALL_GRAVITY * _delta)
+			handle_movement() # Der Player kann sich im "fallen" bewegen
+			
+			if is_on_floor():
+				switch_state(STATE.FLOOR)
+			elif Input.is_action_just_pressed("Jump"):
+				if coyote_timer.time_left > 0:
+					switch_state(STATE.JUMP)
+				elif can_double_jump:
+					switch_state(STATE.DOUBLE_JUMP)
+			elif is_input_toward_facing() and can_wall_slide():
+				switch_state(STATE.WALL_SLIDE)
+			elif Input.is_action_just_pressed("Dash") and can_dash:
+				switch_state(STATE.DASH)
+			
+		STATE.FLOOR:
+			if Input.is_action_just_pressed("Shoot") or Input.is_action_pressed("Shoot"):
+				TryToShoot()
+			if Input.get_axis("Left", "Right"):
+				if isShooting:
+					animated_sprite_2d.play("Shoot_Run")
 				else:
 					animated_sprite_2d.play("Run")
-		else:
-			if isShooting:
-				animated_sprite_2d.play("Shoot_Stand")
 			else:
-				animated_sprite_2d.play("Idle")
-	else:
-		animated_sprite_2d.play("Jump")
+				if isShooting:
+					animated_sprite_2d.play("Shoot_Stand")
+				else:
+					animated_sprite_2d.play("Idle")
+			handle_movement()
+			
+			if not is_on_floor():
+				switch_state(STATE.FALL)
+			elif Input.is_action_just_pressed("Jump"):
+				switch_state(STATE.JUMP)
+			elif Input.is_action_just_pressed("Dash"): # Aufm Boden kann man unendlich dashen
+				switch_state(STATE.DASH)
+				
+		STATE.JUMP, STATE.DOUBLE_JUMP, STATE.WALL_JUMP:
+			velocity.y = move_toward(velocity.y, 0, JUMP_DECELERATION * _delta)
+			if active_state == STATE.WALL_JUMP:
+				var distance: float = absf(position.x - saved_position.x)
+				if distance >= WALL_JUMP_LENGTH or can_wall_slide():
+					active_state = STATE.JUMP
+				else:
+					handle_movement(facing_direction)
+			
+			if active_state != STATE.WALL_JUMP:
+				handle_movement() # Der Player kann sich im "springen" bewegen
+			
+			if Input.is_action_just_released("Jump") or velocity.y >= 0:
+				velocity.y = 0
+				switch_state(STATE.FALL)
+			elif Input.is_action_just_pressed("Jump"):
+				switch_state(STATE.DOUBLE_JUMP)
+			elif Input.is_action_just_pressed("Dash") and can_dash:
+				switch_state(STATE.DASH)
+				
+		STATE.WALL_SLIDE:
+			velocity.y = move_toward(velocity.y, WALL_SLIDE_VELOCITY, WALL_SLIDE_GRAVITY * _delta)
+			handle_movement() # Der Player kann sich im "fallen" bewegen
+			
+			if is_on_floor():
+				switch_state(STATE.FLOOR)
+			elif not can_wall_slide():
+				switch_state(STATE.FALL)
+			elif Input.is_action_just_pressed("Jump"):
+				switch_state(STATE.WALL_JUMP)
+			elif Input.is_action_just_pressed("Dash"):
+				if is_input_toward_facing():
+					switch_state(STATE.WALL_CLIMB)
+				
+		STATE.WALL_CLIMB:
+			var distance: float = absf(position.y - saved_position.y)
+			if distance >= WALL_CLIMB_LENGTH:
+				velocity.y = 0
+				switch_state(STATE.WALL_SLIDE)
+				
+		STATE.DASH:
+			dash_cooldown.start()
+			if is_on_floor():
+				coyote_timer.start()
+			if Input.is_action_just_pressed("Jump"):
+				dash_jump_buffer = true
+			var distance: float = absf(position.x - saved_position.x)
+			if distance >= DASH_LENGTH or absf(get_last_motion().x) != facing_direction:
+				if dash_jump_buffer and coyote_timer.time_left > 0:
+					switch_state(STATE.JUMP)
+				elif is_on_floor():
+					switch_state(STATE.FLOOR)
+				else:
+					switch_state(STATE.FALL)
+			elif can_wall_slide():
+				switch_state(STATE.WALL_SLIDE)
+			
+func handle_movement(input_direction: float = 0) -> void:
+	if input_direction == 0:
+		input_direction = signf(Input.get_axis("Left", "Right"))
+	set_facing_direction(input_direction)
+	velocity.x = input_direction * WALK_VELOCITY
+
+func can_wall_slide() -> bool:
+	return is_on_wall_only() and wall_slide_ray_cast.is_colliding()
+	
+func is_input_toward_facing() -> bool:
+	return signf(Input.get_axis("Left","Right")) == facing_direction
+	
+func set_facing_direction(direction: float) -> void:
+	if direction:
+		animated_sprite_2d.flip_h = direction < 0
+		facing_direction = direction
 		
-		if isShooting:
-			animated_sprite_2d.play("Shoot_Jump")
+		if shooting_point:
+			shooting_point.position.x = direction * absf(shooting_point.position.x)
+		
+		# Flip Raycast:
+		wall_slide_ray_cast.position.x = direction * absf(wall_slide_ray_cast.position.x)
+		wall_slide_ray_cast.target_position.x = direction * absf(wall_slide_ray_cast.target_position.x)
+		wall_slide_ray_cast.force_raycast_update()
 
 func ApplyDamage(damage: int):
 	#Er ist Tot Jim
-	if currentState == PlayerState.DEAD:
+	if active_state == STATE.DEAD:
 		return
 		
 	currentHealth -= damage
@@ -229,7 +295,7 @@ func ApplyDamage(damage: int):
 	GameManager.StartCameraShake()
 	
 	if currentHealth <= 0:
-		currentState = PlayerState.DEAD
+		active_state = STATE.DEAD
 		#animated_sprite_2d.play("Die")
 		await  get_tree().create_timer(2).timeout
 		GameManager.RespawnPlayer()

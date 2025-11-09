@@ -25,7 +25,6 @@ func _on_join_server_button_pressed() -> void:
 	client_peer.create_client("127.0.0.1", PORT) 
 	multiplayer.multiplayer_peer = client_peer
 	
-
 func _connected_to_server():
 	# Wenn man erfolgreich zum Server verbunden wurde, ab zum Level:
 	get_tree().change_scene_to_packed(main_scene)
